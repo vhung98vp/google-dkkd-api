@@ -1,0 +1,7 @@
+regex
+selenium
+selenium_recaptcha_solver
+googlesearch-python
+pymupdf
+flask
+easyocr
