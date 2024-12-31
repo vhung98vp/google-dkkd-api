@@ -1,6 +1,6 @@
 import re
 import json
-from process_ocr import extract_text_from_pdf, write_text_to_txt
+from .process_ocr import extract_text_from_pdf, write_text_to_txt
 
 # Patterns for each piece of information
 COMPANY_PATTERNS = {
