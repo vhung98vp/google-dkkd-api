@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 from src.captcha.company_tax_id import get_company_tax_id_from_google
 from src.captcha.captcha_solver import get_pdfs_from_page
-from src.ocr.extract_data import extract_data_from_pdfs
+# from src.ocr.extract_data import extract_data_from_pdfs
+from src.gemeni_api.gemini import extract_data_from_pdfs
 import time
 
 app = Flask(__name__)
@@ -34,7 +35,8 @@ def search_company_data():
             print(f"Elapsed get pdfs time: {time1-time0:.6f} seconds")
 
         if pdfs:
-            extracted_data = extract_data_from_pdfs(pdfs, quick_search)
+            # extracted_data = extract_data_from_pdfs(pdfs, quick_search)
+            extracted_data = extract_data_from_pdfs(pdfs)
             time2 = time.time()
             print(f"Elapsed extract time: {time2-time1:.6f} seconds") 
             return jsonify(extracted_data)

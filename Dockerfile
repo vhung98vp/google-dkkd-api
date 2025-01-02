@@ -30,6 +30,9 @@ WORKDIR /app
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
+
+# RUN python -c "import easyocr; reader = easyocr.Reader(['vi']);"
+
 COPY . /app
 
 EXPOSE 5000

@@ -77,8 +77,9 @@ def extract_data_from_pdfs(pdfs_path, quick_search=True, output_file=None):
     
     write_text_to_txt(full_text, f"{pdfs_path[0]}.txt")
     company_info = extract_company_info(full_text[0])
-    company_info["shareholders"] = find_doc_ids('\n'.join(full_text[1:]))
-    company_info["capital"] = find_max_capital('\n'.join(full_text[1:]), company_info["capital"])
+    if not quick_search:
+        company_info["shareholders"] = find_doc_ids('\n'.join(full_text[1:]))
+        company_info["capital"] = find_max_capital('\n'.join(full_text[1:]), company_info["capital"])
 
     if output_file:
         with open(output_file, "w", encoding="utf-8") as f:

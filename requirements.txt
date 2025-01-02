@@ -4,4 +4,6 @@ selenium_recaptcha_solver
 googlesearch-python
 pymupdf
 flask
-easyocr
+python-dotenv
+google-generativeai
+# easyocr
