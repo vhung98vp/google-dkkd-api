@@ -5,6 +5,7 @@ from src.captcha.captcha_solver import get_pdfs_from_page
 from src.gemeni_api.gemini import extract_data_from_pdfs
 from src.mst.company_data import get_company_info_from_site
 from src.mst.company_url import get_company_url_from_google
+import re 
 
 import time
 
@@ -51,7 +52,7 @@ def search_company_data():
 
 
 @app.route('/search_google', methods=['GET'])
-def search_company_data():
+def search_company_data_google():
     # Site and company for searching
     site_url = "masothue.com"
     company_name = request.args.get('company_name')
