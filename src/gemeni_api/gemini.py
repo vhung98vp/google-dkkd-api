@@ -6,7 +6,6 @@ import google.generativeai as genai
 import base64
 
 
-
 def read_pdf_file(file_path):
     try:
         with open(file_path, "rb") as doc_file:
@@ -33,17 +32,16 @@ def clean_json_response(text):
 
 
 def extract_data_from_pdfs(pdfs_path):
-
     # Get env file
     load_dotenv()
     api_key = os.getenv('API_KEY')
     prompt = os.getenv('PROMPT')
     genai.configure(api_key=api_key)
 
-
-    # Read and encode the local file
+    # Read and encode local files
     docs_data = read_pdf_files(pdfs_path)
 
+    # Call gemini model and return result
     model = genai.GenerativeModel("gemini-1.5-flash")
     response = model.generate_content([prompt, *docs_data])
 

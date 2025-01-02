@@ -10,15 +10,50 @@ DOWNLOAD_DIR = os.path.join(os.getcwd(), 'downloads')
 
 BCDT_PAGE_URL = 'https://bocaodientu.dkkd.gov.vn/egazette/Forms/Egazette/ANNOUNCEMENTSListingInsUpd.aspx'
 publication_type_filter_key = "ctl00$C$ANNOUNCEMENT_TYPE_IDFilterFld"
-publication_type_filter_options = ["NEW", "AMEND", "CORP", "OTHER", "CHANTC", "REVOKE"]
-# Đăng ký mới, Đăng ký thay đổi, Giải thể, Loại khác, Thông báo thay đổi, Vi phạm/Thu hồi
 
 company_id_key = "ctl00$C$ENT_GDT_CODEFld"
 btn_filter_key = "ctl00$C$BtnFilter"
 response_pdf_key = "ctl00_C_PnlListResult"
 
-def get_pdfs_from_page(company_tax_id: str, count=1, publication_type="AMEND", download_dir=DOWNLOAD_DIR):
-    test_driver = get_driver()
+
+def download_file(link, download_dir, timeout=5):
+    # Get the current list of files in the directory
+    before_files = set(os.listdir(download_dir))
+
+    # Start download
+    link.click()
+    start_time = time.time()
+    while True:
+        # Get the current list of files in the directory
+        current_files = set(os.listdir(download_dir))
+        new_files = current_files - before_files
+
+        # Check for a new file that is fully downloaded
+        for file in new_files:
+            if not (file.endswith(".crdownload") or file.endswith(".tmp")):  # Exclude temporary files
+                return os.path.join(download_dir, file)
+
+        # Check for timeout
+        if time.time() - start_time > timeout:
+            return None
+        # Waiting
+        time.sleep(1)
+
+
+def download_files(links, download_dir, count):
+    if links:  
+        downloaded_files = []
+        for pdf_link in links[:count]:
+            downloaded_file = download_file(pdf_link, download_dir)
+            if downloaded_file:
+                downloaded_files.append(downloaded_file)
+        return downloaded_files
+    else: # Not found links
+        return []
+
+def get_pdfs_from_site(company_tax_id: str, count=1, publication_type="AMEND", download_dir=DOWNLOAD_DIR):
+    # Get page contents
+    test_driver = get_driver(download_dir)
     test_driver.get(BCDT_PAGE_URL)
 
     # Fill options
@@ -34,39 +69,18 @@ def get_pdfs_from_page(company_tax_id: str, count=1, publication_type="AMEND", d
     recaptcha_iframe = test_driver.find_element(By.XPATH, '//iframe[@title="reCAPTCHA"]')
     solver.click_recaptcha_v2(iframe=recaptcha_iframe)
 
-    token = test_driver.execute_script("return document.getElementById('g-recaptcha-response').value;")
-    print("reCAPTCHA Token:", token)
+    # token = test_driver.execute_script("return document.getElementById('g-recaptcha-response').value;")
+    # print("reCAPTCHA Token:", token)
 
+    # Click search (filter) button
     test_driver.find_element(By.NAME, btn_filter_key).click()
 
     # Wait 5s for the new page to load or result to appear
     WebDriverWait(test_driver, 5).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-
-    if len(os.listdir(download_dir)) == 0:
-        last_file = None
-    else:
-        last_file = max([os.path.join(download_dir, f) for f in os.listdir(download_dir)], key=os.path.getctime)
     
+    # Response page with table of pdfs to download
     response_table = test_driver.find_element(By.ID, response_pdf_key)
     pdf_links = response_table.find_elements(By.TAG_NAME, "input")
-    if not pdf_links:
-        print("Request empty. Check company tax id and type")
-        return []
-    else:
-        pdf_links = pdf_links[:count]
-        downloaded_files = []
-        for pdf_link in pdf_links:
-            pdf_link.click()
-            time.sleep(3)  # Wait for downloading
-            downloaded_file = max([os.path.join(download_dir, f) for f in os.listdir(download_dir)], key=os.path.getctime)
 
-            if last_file != downloaded_file:
-                last_file = downloaded_file
-                # downloaded_files.append(os.path.basename(downloaded_file))
-                downloaded_files.append(last_file)
-                print(f"PDF downloaded: {last_file}")
-            else:
-                print("No PDF downloaded. Check the button and browser settings.")
-        return downloaded_files
-
-# get_pdfs_from_page(company_tax_id='0107694304')
+    # Download and return files
+    return download_files(pdf_links, download_dir, count)
