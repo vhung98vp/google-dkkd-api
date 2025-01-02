@@ -30,7 +30,8 @@ def download_file(link, download_dir, timeout=5):
 
         # Check for a new file that is fully downloaded
         for file in new_files:
-            if not (file.endswith(".crdownload") or file.endswith(".tmp")):  # Exclude temporary files
+            #if not (file.endswith(".crdownload") or file.endswith(".tmp")):  # Exclude temporary files
+            if file.endswith(".pdf"):  # Get only PDFs
                 return os.path.join(download_dir, file)
 
         # Check for timeout
