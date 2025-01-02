@@ -21,7 +21,9 @@ def read_pdf_file(file_path):
 def read_pdf_files(file_paths):
     pdf_bytes = []
     for file_path in file_paths:
-        pdf_bytes.append({'mime_type': 'application/pdf', 'data': read_pdf_file(file_path)})
+        pdf_byte = read_pdf_file(file_path)
+        if pdf_byte:
+            pdf_bytes.append({'mime_type': 'application/pdf', 'data': pdf_byte})
     return pdf_bytes
 
 def clean_json_response(text):
