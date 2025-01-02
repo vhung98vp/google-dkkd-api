@@ -8,8 +8,15 @@ import base64
 
 
 def read_pdf_file(file_path):
-    with open(file_path, "rb") as doc_file:
-        return base64.standard_b64encode(doc_file.read()).decode("utf-8")
+    try:
+        with open(file_path, "rb") as doc_file:
+            return base64.standard_b64encode(doc_file.read()).decode("utf-8")
+    except FileNotFoundError:
+        print(f"File not found: {file_path}") # Print the file name if not found
+        return None
+    except Exception as e:
+        print(f"Error reading file {file_path}: {e}")
+        return None
 
 def read_pdf_files(file_paths):
     pdf_bytes = []
