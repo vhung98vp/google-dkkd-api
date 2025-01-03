@@ -3,7 +3,7 @@ from src.captcha.captcha_solver import get_pdfs_from_site
 # from src.ocr.extract_data import extract_data_from_pdfs
 from src.gemini_api.gemini import extract_data_from_pdfs
 from src.mst.company_data import get_company_info_from_site
-from src.google.company_search import get_company_url, get_company_tax_id
+from src.google.company_search import get_company_identity
 
 
 PUBLICATION_TYPE = ["NEW", "AMEND", "CORP", "OTHER", "CHANTC", "REVOKE"]
@@ -31,17 +31,17 @@ def search_company():
         # Cases for params
         if search_engine == 'google':   # Using google-mst
             if search_type == 'quick':
-                tax_id = get_company_tax_id(company_name, site_url)
+                tax_id = get_company_identity(company_name, site_url)
                 return {'company_tax_id': tax_id}
             elif search_type == 'full':
-                company_url = get_company_url(company_name, site_url)
+                company_url = get_company_identity(company_name, site_url, False)
                 company_info = get_company_info_from_site(company_url)
                 return jsonify(company_info)
             else:
                 return response_error("Invaid search type")
         
         elif search_engine == 'dkkd':   # Using google-mst-dkkd
-            tax_id = get_company_tax_id(company_name, site_url)
+            tax_id = get_company_identity(company_name, site_url)
             if search_type == 'quick':
                 count = 1
             elif search_type == 'full':
