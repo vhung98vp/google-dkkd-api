@@ -1,7 +1,7 @@
 # Company Information Search API
 
 # Overview:
-This Flask-based API enables users to search for company information in the internet. The search functionality leverages the Google search engine and integrates seamlessly with Gemini for advanced queries. Data sources will be used:
+This Flask-based API enables users to search for company information on the internet. The search functionality leverages the Google search engine and integrates seamlessly with Gemini for advanced queries. Data sources will be used:
 - masothue.com
 - bocaodientu.dkkd.gov.vn
 
