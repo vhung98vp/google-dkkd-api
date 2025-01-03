@@ -13,7 +13,8 @@ def get_company_identity(company_name, site_url, id_only=True):
         company_url = next(search_results, None)
         if not company_url:
             return f"No results found for {company_name} on {site_url}"
-        if id_only:
+        
+        if id_only: # Take only tax id
             return re.search(r'\d+', company_url).group()
         else:
             return company_url
