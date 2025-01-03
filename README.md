@@ -1,11 +1,22 @@
-# Description:
-This Flask API allows you to search for company information by name on the website masothue.com, bocaodientu.dkkd.gov.vn using google engine. 
+# Company Information Search API
 
-# Route:
+# Overview:
+This Flask-based API enables users to search for company information using the following sources:
+- masothue.com
+- bocaodientu.dkkd.gov.vn
+The search functionality leverages the Google search engine and integrates seamlessly with Gemini for advanced queries.
+
+# Environment Configuration:
+- API_KEY (string, required with dkkd search): Gemini API key for authentication.
+- PROMPT (string, required with dkkd search): Custom prompt used to interact with Gemini.
+- PROXIES (string, optional): Comma-separated list of proxy URLs to use for searching with Google, to prevent bot detection errors.
+
+# Endpoints:
 [GET] /search
+Retrieve company details based on the specified parameters.
 
 Query Parameters:
-- company_name (string, required): Name of company to search.
-- engine (string, optional): Search engine [google, dkkd], default google.
-- type (string, optional): Search type [quick, full], default quick.
-- pub_type (string, optional): Publication type on dkkd.gov.vn [NEW, AMEND, CORP, OTHER, CHANTC, REVOKE], default AMEND.
+- company_name (string, required): Name of company to search for.
+- engine (string, optional): Search engine [google (default), dkkd].
+- type (string, optional): Search type [quick (default), full].
+- pub_type (string, optional): Publication type on dkkd.gov.vn [NEW, AMEND (default), CORP, OTHER, CHANTC, REVOKE].

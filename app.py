@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
-from src.captcha.company_tax_id import get_company_tax_id_from_google
 from src.captcha.captcha_solver import get_pdfs_from_site
 # from src.ocr.extract_data import extract_data_from_pdfs
-from src.gemeni_api.gemini import extract_data_from_pdfs
+from src.gemini_api.gemini import extract_data_from_pdfs
 from src.mst.company_data import get_company_info_from_site
-from src.mst.company_url import get_company_url_from_google
+from src.google_search.company_url import get_company_url_from_google
+from src.google_search.company_tax_id import get_company_tax_id_from_google
 
 
 PUBLICATION_TYPE = ["NEW", "AMEND", "CORP", "OTHER", "CHANTC", "REVOKE"]
