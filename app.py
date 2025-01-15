@@ -7,7 +7,7 @@ from src.google.company_search import get_company_identity
 import time
 
 def retry_request(func, max_retries=3, delay_in_seconds=2):
-    for attempt in range(max_retries):
+    for attempt in range(max_retries + 1):
         try:
             if attempt > 0:
                 print(f"Try again, attempt {attempt}...")
