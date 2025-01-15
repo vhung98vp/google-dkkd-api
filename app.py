@@ -4,7 +4,29 @@ from src.captcha.captcha_solver import get_pdfs_from_site
 from src.gemini_api.gemini import extract_data_from_pdfs
 from src.mst.company_data import get_company_info_from_site
 from src.google.company_search import get_company_identity
+import time
 
+def retry_request(func, max_retries=3, delay_in_seconds=2):
+    for attempt in range(max_retries):
+        try:
+            if attempt > 0:
+                print(f"Try again, attempt {attempt}...")
+            
+            result = func()
+            if result != None:
+                return result
+            else:
+                raise ValueError("Function return None")
+        except ValueError:
+            if attempt < max_retries:
+                time.sleep(delay_in_seconds * (2 ** attempt))  # Exponential backoff (2s, 4s, 8s)
+            else:
+                return None
+        except Exception as e:
+            if attempt < max_retries:
+                time.sleep(delay_in_seconds * (2 ** attempt))  # Exponential backoff (2s, 4s, 8s)
+            else:
+                raise e
 
 PUBLICATION_TYPE = ["NEW", "AMEND", "CORP", "OTHER", "CHANTC", "REVOKE"]
 # ĐK mới, ĐK thay đổi, Giải thể, Loại khác, TB thay đổi, Vi phạm/Thu hồi
@@ -28,20 +50,31 @@ def search_company():
         search_engine = request.args.get('engine', 'google')
         pub_type = request.args.get('pub_type', 'AMEND')
 
+        print(f"Searching company {company_name}...")
+
         # Cases for params
         if search_engine == 'google':   # Using google-mst
             if search_type == 'quick':
-                tax_id = get_company_identity(company_name, site_url)
+                tax_id = retry_request(lambda: get_company_identity(company_name, site_url))
+                if not tax_id:
+                    return response_error(f"No results found for {company_name} on {site_url}")
+                
                 return {'company_tax_id': tax_id}
             elif search_type == 'full':
-                company_url = get_company_identity(company_name, site_url, False)
+                company_url = retry_request(lambda: get_company_identity(company_name, site_url, False))
+                if not company_url:
+                    return response_error(f"No results found for {company_name} on {site_url}")
+                
                 company_info = get_company_info_from_site(company_url)
                 return jsonify(company_info)
             else:
                 return response_error("Invaid search type")
         
         elif search_engine == 'dkkd':   # Using google-mst-dkkd
-            tax_id = get_company_identity(company_name, site_url)
+            tax_id = retry_request(lambda: get_company_identity(company_name, site_url))
+            if not tax_id:
+                return response_error(f"No results found for {company_name} on {site_url}")
+            
             if search_type == 'quick':
                 count = 1
             elif search_type == 'full':
@@ -51,7 +84,8 @@ def search_company():
             if pub_type not in PUBLICATION_TYPE:
                 return response_error("Invaid publication type")
             
-            pdfs = get_pdfs_from_site(tax_id, count, pub_type)
+            print(f"Getting PDFs from site with tax_id {tax_id}...")
+            pdfs = retry_request(lambda: get_pdfs_from_site(tax_id, count, pub_type))
             if not pdfs:
                 return response_error(f"Request empty. Check type and company tax id: {tax_id}", 404)
             else:
