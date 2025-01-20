@@ -20,7 +20,7 @@ screen_sizes = ['1920,1080', '1366,768', '1440,900', '1600,900',
 DOWNLOAD_DIR = os.path.join(os.getcwd(), 'downloads')
 
 
-def get_driver(download_dir=DOWNLOAD_DIR, open_gui=True, proxy=get_proxy()):
+def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options = Options()
     # user_agent = random.choice(USER_AGENT_LIST)
     user_agent = UserAgent(platforms='desktop').random
@@ -72,8 +72,8 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=True, proxy=get_proxy()):
     options.add_argument("--disable-gpu")
     options.add_argument("--no-first-run")
     options.add_argument("--no-service-autorun")
-    # options.add_argument("--no-sandbox")
-    # options.add_argument("--disable-crash-reporter")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-crash-reporter")
     options.add_argument("--no-zygote")
     options.add_argument("--disable-infobars")
     # options.add_argument("--single-process")
