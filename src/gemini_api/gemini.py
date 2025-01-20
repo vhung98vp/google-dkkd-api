@@ -2,7 +2,7 @@ import os
 import re
 import json
 from dotenv import load_dotenv
-import google_search.generativeai as genai
+import google.generativeai as genai
 import base64
 from ..logger_config import get_logger
 

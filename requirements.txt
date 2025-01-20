@@ -1,9 +1,10 @@
 regex
 selenium
 selenium_recaptcha_solver
-googlesearch-python
-pymupdf
+fake_useragent
 flask
 python-dotenv
 google-generativeai
+beautifulsoup4
+# pymupdf
 # easyocr

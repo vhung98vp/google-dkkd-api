@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from src.browser_search.bcdt_search import get_pdfs_from_site
-# from src.search.google_search import get_company_identity
+# from src.browser_search.google_search import get_company_identity
 from src.google_search.search import get_company_identity
 from src.browser_search.chromedriver import get_driver, reset_driver
 # from src.ocr.extract_data import extract_data_from_pdfs
@@ -12,7 +12,7 @@ import time
 app_driver = get_driver()
 logger = get_logger(__name__)
 
-def retry_request(func, max_retries=2, delay_in_seconds=2):
+def retry_request(func, max_retries=1, delay_in_seconds=2):
     for attempt in range(max_retries + 1):
         try:
             if attempt > 0:

@@ -79,9 +79,9 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     # options.add_argument("--single-process")
 
     # # Custom chromedriver path on windows
-    chromedriver_path = './driver/chromedriver.exe'
-    driver = webdriver.Chrome(options=options, executable_path=chromedriver_path)
-    # driver = webdriver.Chrome(options=options)
+    # chromedriver_path = './driver/chromedriver.exe'
+    # driver = webdriver.Chrome(options=options, executable_path=chromedriver_path)
+    driver = webdriver.Chrome(options=options)
 
     return driver
 
