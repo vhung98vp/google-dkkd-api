@@ -50,9 +50,9 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options.add_argument(f'--fp-screenwidth={random.choice(screen_widths)}')
     options.add_argument(f"--window-size={random.choice(screen_sizes)}")
     options.add_argument('--disable-blink-features=AutomationControlled')
-    options.add_argument('--sonet-fingerprinting-client-rects-noise')
-    options.add_argument('--sonet-fingerprinting-canvas-image-data-noise')
-    options.add_argument('--sonet-fingerprinting-audio-context-data-noise')
+    # options.add_argument('--sonet-fingerprinting-client-rects-noise')
+    # options.add_argument('--sonet-fingerprinting-canvas-image-data-noise')
+    # options.add_argument('--sonet-fingerprinting-audio-context-data-noise')
     
     # Add additional parameters
     options.add_argument("--disable-background-timer-throttling")
@@ -72,11 +72,11 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options.add_argument("--disable-gpu")
     options.add_argument("--no-first-run")
     options.add_argument("--no-service-autorun")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-crash-reporter")
+    # options.add_argument("--no-sandbox")
+    # options.add_argument("--disable-crash-reporter")
     options.add_argument("--no-zygote")
     options.add_argument("--disable-infobars")
-    options.add_argument("--single-process")
+    # options.add_argument("--single-process")
 
     # # Custom chromedriver path on windows
     # chromedriver_path = './driver/chromedriver.exe'

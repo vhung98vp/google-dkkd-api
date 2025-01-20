@@ -81,6 +81,7 @@ def get_pdfs_from_site(driver, company_tax_id: str, count=1, announcement_type="
         logger.info(f'Solved captcha on site dkkd in time (s): {time.time() - start:.6f}')
     except Exception as e:
         logger.error(f"Exception when trying to solve captcha on site dkkd: {e}")
+        raise e
     
     # Company id (tax id)
     company_input = driver.find_element(By.NAME, company_id_key)
