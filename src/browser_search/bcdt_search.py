@@ -2,14 +2,17 @@ from selenium_recaptcha_solver import RecaptchaSolver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 import os
 import time
-from .chromedriver import get_driver
+from ..logger_config import get_logger
+
+logger = get_logger(__name__)
 
 DOWNLOAD_DIR = os.path.join(os.getcwd(), 'downloads')
 
 BCDT_PAGE_URL = 'https://bocaodientu.dkkd.gov.vn/egazette/Forms/Egazette/ANNOUNCEMENTSListingInsUpd.aspx'
-publication_type_filter_key = "ctl00$C$ANNOUNCEMENT_TYPE_IDFilterFld"
+announcement_type_filter_key = "ctl00$C$ANNOUNCEMENT_TYPE_IDFilterFld"
 
 company_id_key = "ctl00$C$ENT_GDT_CODEFld"
 btn_filter_key = "ctl00$C$BtnFilter"
@@ -52,36 +55,48 @@ def download_files(links, download_dir, count):
     else: # Not found links
         return []
 
-def get_pdfs_from_site(company_tax_id: str, count=1, publication_type="AMEND", download_dir=DOWNLOAD_DIR):
+def get_pdfs_from_site(driver, company_tax_id: str, count=1, announcement_type="AMEND", download_dir=DOWNLOAD_DIR):
     # Get page contents
-    test_driver = get_driver(download_dir)
-    test_driver.get(BCDT_PAGE_URL)
+    start = time.time()
 
-    # Fill options
-    # Publication type
-    pub_type_dropdown = test_driver.find_element(By.NAME, publication_type_filter_key) 
-    pub_type_select = Select(pub_type_dropdown)
-    pub_type_select.select_by_value(publication_type)
-    # Company id (tax id)
-    test_driver.find_element(By.NAME, company_id_key).send_keys(company_tax_id)
+    driver.get(BCDT_PAGE_URL)
+    # Avoid redirect to login page
+    if driver.current_url != BCDT_PAGE_URL:
+        driver.get(BCDT_PAGE_URL)   
+
+    logger.info(f'Load site dkkd in time (s): {time.time() - start:.6f}')
+
+    ## Fill options
+    # Announcement type
+    ann_type_dropdown = driver.find_element(By.NAME, announcement_type_filter_key) 
+    ann_type_select = Select(ann_type_dropdown)
+    ann_type_select.select_by_value(announcement_type)
 
     # Captcha solver
-    solver = RecaptchaSolver(driver=test_driver)
-    recaptcha_iframe = test_driver.find_element(By.XPATH, '//iframe[@title="reCAPTCHA"]')
-    solver.click_recaptcha_v2(iframe=recaptcha_iframe)
-
-    # token = test_driver.execute_script("return document.getElementById('g-recaptcha-response').value;")
-    # print("reCAPTCHA Token:", token)
+    try:
+        time.sleep(1)
+        solver = RecaptchaSolver(driver=driver)
+        recaptcha_iframe = driver.find_element(By.XPATH, '//iframe[@title="reCAPTCHA"]')
+        solver.click_recaptcha_v2(iframe=recaptcha_iframe)
+        logger.info(f'Solved captcha on site dkkd in time (s): {time.time() - start:.6f}')
+    except Exception as e:
+        logger.error(f"Exception when trying to solve captcha on site dkkd: {e}")
+    
+    # Company id (tax id)
+    company_input = driver.find_element(By.NAME, company_id_key)
+    company_input.send_keys(Keys.CONTROL + "a")  # Select all text to replace
+    company_input.send_keys(company_tax_id)
 
     # Click search (filter) button
-    test_driver.find_element(By.NAME, btn_filter_key).click()
+    driver.find_element(By.NAME, btn_filter_key).click()
 
     # Wait 5s for the new page to load or result to appear
-    WebDriverWait(test_driver, 5).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
     
     # Response page with table of pdfs to download
-    response_table = test_driver.find_element(By.ID, response_pdf_key)
+    response_table = driver.find_element(By.ID, response_pdf_key)
     pdf_links = response_table.find_elements(By.TAG_NAME, "input")
+    logger.info(f'Get download links in time (s): {time.time() - start:.6f}')
 
     # Download and return files
     return download_files(pdf_links, download_dir, count)

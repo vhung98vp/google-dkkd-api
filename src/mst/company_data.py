@@ -1,13 +1,7 @@
 import requests
-import random
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 
-USER_AGENT_LIST = ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.0.1 Safari/537.36",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 Edge/94.0.992.47",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; Trident/7.0; AS; .NET CLR 4.0.30319; InfoPath.3; .NET4.0C; .NET4.0E) like Gecko",
-                ]
 KEYS_TO_EXTRACT = ["Tên đầy đủ", "Tên quốc tế", "Tên viết tắt", "Mã số thuế", "Địa chỉ", "Người đại diện", "Điện thoại"]
 KEYS_DICT = {
     "Tên đầy đủ": "full_name", 
@@ -55,8 +49,7 @@ def extract_soup_from_table(soup):
 def get_company_info_from_site(company_url):
     try:
         # Get page source from company_url
-        user_agent = random.choice(USER_AGENT_LIST)
-        headers = {'User-Agent': user_agent}
+        headers = {'User-Agent': UserAgent().random}
         response = requests.get(company_url, headers=headers)
         if response.status_code != 200:
             return f"Failed to retrieve data from {company_url}. Status code: {response.status_code}"

@@ -2,8 +2,11 @@ import os
 import re
 import json
 from dotenv import load_dotenv
-import google.generativeai as genai
+import google_search.generativeai as genai
 import base64
+from ..logger_config import get_logger
+
+logger = get_logger(__name__)
 
 
 def read_pdf_file(file_path):
@@ -11,10 +14,10 @@ def read_pdf_file(file_path):
         with open(file_path, "rb") as doc_file:
             return base64.standard_b64encode(doc_file.read()).decode("utf-8")
     except FileNotFoundError:
-        print(f"File not found: {file_path}") # Print the file name if not found
+        logger.error(f"File not found: {file_path}") # Print the file name if not found
         return None
     except Exception as e:
-        print(f"Error reading file {file_path}: {e}")
+        logger.error(f"Error reading file {file_path}: {e}")
         return None
 
 def read_pdf_files(file_paths):

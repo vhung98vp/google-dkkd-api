@@ -18,4 +18,4 @@ Query Parameters:
 - company_name (string, required): Name of company to search for.
 - engine (string, optional): Search engine [google (default), dkkd].
 - type (string, optional): Search type [quick (default), full].
-- pub_type (string, optional): Publication type on dkkd.gov.vn [NEW, AMEND (default), CORP, OTHER, CHANTC, REVOKE].
+- ann_type (string, optional): Announcement type on dkkd.gov.vn [NEW, AMEND (default), CORP, OTHER, CHANTC, REVOKE].
