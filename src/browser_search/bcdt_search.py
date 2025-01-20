@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 import os
 import time
+from .simulate_interaction import simulate_interaction
 from ..logger_config import get_logger
 
 logger = get_logger(__name__)
@@ -17,7 +18,14 @@ announcement_type_filter_key = "ctl00$C$ANNOUNCEMENT_TYPE_IDFilterFld"
 company_id_key = "ctl00$C$ENT_GDT_CODEFld"
 btn_filter_key = "ctl00$C$BtnFilter"
 response_pdf_key = "ctl00_C_PnlListResult"
-
+xpath_list = [
+        "//input[@id='ctl00_C_ENT_CODEFilterFld']", 
+        "//input[@id='ctl00_C_ENT_GDT_CODEFld']",
+        "//input[@id='ctl00_C_ENT_NAMEFilterFld']",
+        "//input[@id='ctl00_C_WebTextBox1']",
+        "//input[@id='ctl00_C_PUBLISH_DATEFilterFldFrom']",
+        "//input[@id='ctl00_C_PUBLISH_DATEFilterFldTo']",        
+    ]
 
 def download_file(link, download_dir, timeout=5):
     # Get the current list of files in the directory
@@ -66,6 +74,8 @@ def get_pdfs_from_site(driver, company_tax_id: str, count=1, announcement_type="
 
     logger.info(f'Load site dkkd in time (s): {time.time() - start:.6f}')
 
+    simulate_interaction(driver, xpath_list)
+    logger.info(f'Simulated interaction in time (s): {time.time() - start:.6f}')
     ## Fill options
     # Announcement type
     ann_type_dropdown = driver.find_element(By.NAME, announcement_type_filter_key) 
