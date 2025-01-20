@@ -83,6 +83,7 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     # driver = webdriver.Chrome(options=options, executable_path=chromedriver_path)
     driver = webdriver.Chrome(options=options)
 
+    logger.info(f"Chrome driver has been created with proxy {proxy}")
     return driver
 
 def reset_driver(driver):
