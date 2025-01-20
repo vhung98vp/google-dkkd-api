@@ -43,9 +43,9 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=True, proxy=get_proxy()):
     # options.add_argument('--disable-blink-features=AutomationControlled')
     
     # # Custom chromedriver path on windows
-    chromedriver_path = './driver/chromedriver.exe'
-    driver = webdriver.Chrome(options=options, executable_path=chromedriver_path)
-    # driver = webdriver.Chrome(options=options)
+    # chromedriver_path = './driver/chromedriver.exe'
+    # driver = webdriver.Chrome(options=options, executable_path=chromedriver_path)
+    driver = webdriver.Chrome(options=options)
 
     logger.info(f"Chrome driver has been created with UA {user_agent} and proxy {proxy}")
     return driver
