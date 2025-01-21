@@ -6,5 +6,6 @@ flask
 python-dotenv
 google-generativeai
 beautifulsoup4
+undetected_chromedriver
 # pymupdf
 # easyocr
