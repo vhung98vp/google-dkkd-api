@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from src.browser_search.bcdt_search import get_pdfs_from_site
-from src.browser_search.google_search import get_company_identity
+from src.browser_search.bing_search import get_company_identity
 # from src.google_search.search import get_company_identity
 from src.browser_search.chromedriver import get_driver, reset_driver
 # from src.ocr.extract_data import extract_data_from_pdfs
