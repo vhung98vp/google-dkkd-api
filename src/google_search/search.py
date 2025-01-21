@@ -34,7 +34,7 @@ def get_company_identity(company_name, site_url):
     first_result = soup.find("a", class_="fuLhoc")  # CSS selector for the link
 
     if not first_result:
-        return None
+        return {"search.html": response.text}
     
     company_url = re.search(r"/url\?q=(https://[^\s&]+)", first_result["href"]).group(1)
     company_tax_id = re.search(r'\d+', company_url).group()
