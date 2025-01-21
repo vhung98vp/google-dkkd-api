@@ -20,6 +20,7 @@ def retry_request(func, max_retries=1, delay_in_seconds=2):
             return func()
         except Exception as e:
             if attempt < max_retries and "Google has detected automated queries" not in str(e):
+                logger.error(f"Exception while processing {func.__name__}: {e}")
                 time.sleep(delay_in_seconds * (2 ** attempt))  # Exponential backoff (2s, 4s, 8s)
             else:
                 raise e
@@ -107,6 +108,7 @@ def search_company():
         else:
             return response_error("Invaid search engine")
     except Exception as e:
+        logger.error(f"Exception while processing request for company {company_name}: {e}")
         app_driver = reset_driver(app_driver)
         return response_error(f"An error occurred: {e}", 500)
 
