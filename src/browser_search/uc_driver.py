@@ -47,8 +47,8 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options.add_argument("--disable-webrtc")
 
     # # Custom chromedriver path on windows
-    chromedriver_path = './driver/chromedriver.exe'
-    # chromedriver_path = '/usr/local/bin/chromedriver'
+    # chromedriver_path = './driver/chromedriver.exe'
+    chromedriver_path = '/usr/local/bin/chromedriver'
     driver = uc.Chrome(options=options, driver_executable_path=chromedriver_path, version_main=130)
     # driver = uc.Chrome(options=options)
 
