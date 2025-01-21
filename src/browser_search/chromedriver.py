@@ -82,11 +82,22 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options.add_argument("--no-zygote")
     options.add_argument("--disable-infobars")
     # options.add_argument("--single-process")
+    options.add_argument("--remote-debugging-pipe")
+    options.add_argument("--enable-automation") 
 
     # # Custom chromedriver path on windows
     # chromedriver_path = './driver/chromedriver.exe'
     # driver = webdriver.Chrome(options=options, executable_path=chromedriver_path)
     driver = webdriver.Chrome(options=options)
+
+    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        "source": """
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined
+            })
+        """
+    })
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
     logger.info(f"Chrome driver has been created with UA {user_agent} and proxy {proxy}")
     return driver
