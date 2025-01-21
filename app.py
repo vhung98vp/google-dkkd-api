@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from src.browser_search.bcdt_search import get_pdfs_from_site
-# from src.browser_search.google_search import get_company_identity
-from src.google_search.search import get_company_identity
+from src.browser_search.google_search import get_company_identity
+# from src.google_search.search import get_company_identity
 from src.browser_search.chromedriver import get_driver, reset_driver
 # from src.ocr.extract_data import extract_data_from_pdfs
 from src.gemini_api.gemini import extract_data_from_pdfs
@@ -52,16 +52,16 @@ def search_company():
         # Cases for params
         if search_engine == 'google':   # Using google-mst
             if search_type == 'quick':
-                company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
-                # company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
+                # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
+                company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
                 if not company_idt:
                     return response_error(f"No results found for {company_name} on {site_url}", 404)
                 
                 logger.info(f'Quick search google for {company_name} in time (s): {time.time() - start:.6f}')
                 return company_idt
             elif search_type == 'full':
-                company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
-                # company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
+                # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
+                company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
                 if not company_idt:
                     return response_error(f"No results found for {company_name} on {site_url}", 404)
                 
@@ -81,8 +81,8 @@ def search_company():
             if ann_type not in ANNOUNCEMENT_TYPE:
                 return response_error("Invaid announcement type")
             
-            company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
-            # company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
+            # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
+            company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
             if not company_idt:
                 return response_error(f"No results found for {company_name} on {site_url}", 404)
             
