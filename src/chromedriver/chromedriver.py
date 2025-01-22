@@ -31,7 +31,7 @@ extensions_dir = os.path.join(os.getcwd(), 'extensions')
 extension_files = [f for f in os.listdir(extensions_dir) if f.endswith('.crx')]
 
 
-def get_driver(download_dir=DOWNLOAD_DIR, open_gui=True, proxy=get_proxy()):
+def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options = Options()
     # user_agent = random.choice(USER_AGENT_LIST)
     user_agent = UserAgent(platforms='desktop').random
