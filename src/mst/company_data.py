@@ -1,4 +1,5 @@
 import requests
+import time
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
@@ -46,15 +47,19 @@ def extract_soup_from_table(soup):
     return filtered_data
 
 
-def get_company_info_from_site(company_url):
+def get_company_info_from_site(company_url, driver=None):
     # Get page source from company_url
-    headers = {'User-Agent': UserAgent().random}
-    response = requests.get(company_url, headers=headers)
-    if response.status_code != 200:
-        return f"Failed to retrieve data from {company_url}. Status code: {response.status_code}"
-
-    # Parse the page content
-    soup = BeautifulSoup(response.text, 'html.parser')
+    if driver:
+        driver.get(company_url)
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+    else:
+        headers = {'User-Agent': UserAgent().random}
+        response = requests.get(company_url, headers=headers)
+        if response.status_code != 200:
+            return f"Failed to retrieve data from {company_url}. Status code: {response.status_code}"
+        
+        # Parse the page content
+        soup = BeautifulSoup(response.text, 'html.parser')
 
     # Extract company data (assumes specific HTML structure, adjust selectors as needed)
     company_info = extract_soup_from_table(soup)
@@ -68,10 +73,15 @@ def get_company_info_from_site(company_url):
         # Get associated company data
         for link in associated_companies_links[1:]:
             asc_url = "https://masothue.com" + link.get('href')
-            asc_response = requests.get(asc_url, headers=headers)
-            asc_soup = BeautifulSoup(asc_response.text, 'html.parser')
+            if driver:
+                driver.get(asc_url)
+                asc_soup = BeautifulSoup(driver.page_source, 'html.parser')
+            else:
+                asc_response = requests.get(asc_url, headers=headers)
+                asc_soup = BeautifulSoup(asc_response.text, 'html.parser')
             asc_data = extract_soup_from_table(asc_soup)
             company_info['associated'].append(asc_data)
+            time.sleep(0.5)
         
         return company_info 
     

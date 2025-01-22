@@ -77,7 +77,7 @@ def search_company():
                 if not company_idt:
                     return response_error(f"No results found for {company_name} on {site_url}", 404)
                 
-                company_info = get_company_info_from_site(company_idt["url"])
+                company_info = get_company_info_from_site(company_idt["url"], app_driver)
                 logger.info(f'Full search google & mst for {company_name} in time (s): {time.time() - start:.6f}')
                 return jsonify(company_info)
             else:
