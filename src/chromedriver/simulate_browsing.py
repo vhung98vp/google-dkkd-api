@@ -34,7 +34,7 @@ def simulate_browsing(driver, total):
         site = random.choice(popular_sites)
         driver.execute_script(f"window.open('https://{site}', '_blank');") 
         driver.switch_to.window(driver.window_handles[-1]) 
-        time.sleep(5)
+        time.sleep(wait)
         driver.close()
         driver.switch_to.window(driver.window_handles[0])         
         time.sleep(1)

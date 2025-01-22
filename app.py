@@ -35,6 +35,12 @@ app = Flask(__name__)
 def response_error(message, code=400):
     return jsonify({"error": message}), code
 
+
+@app.route('/manage/health', methods=['GET'])
+def manage_health():
+    return jsonify({"message": "Service is working"}), 200
+
+
 @app.route('/search', methods=['GET'])
 def search_company():
     global app_driver
@@ -54,7 +60,7 @@ def search_company():
         start = time.time()
         # Cases for params
 
-        simulate_browsing(app_driver, random.randint(2,5))
+        simulate_browsing(app_driver, random.randint(2,4))
 
         if search_engine == 'google':   # Using google-mst
             if search_type == 'quick':
