@@ -16,7 +16,8 @@ xpath_list = [
 def get_company_identity(driver, company_name, site_url):
     start = time.time()
     
-    query = f"{company_name} site:{site_url}"
+    # query = f"{company_name} site:{site_url}"
+    query = f"{company_name} {site_url}"
     driver.get(f"https://www.google.com/search?q={query}&hl=vi")
     logger.info(f'Load google in time (s): {time.time() - start:.6f}')
 
