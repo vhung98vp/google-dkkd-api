@@ -1,7 +1,9 @@
 import random
 import os
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from fake_useragent import UserAgent
 from .proxies import get_proxy
 from ..logger_config import get_logger
@@ -24,6 +26,30 @@ screen_sizes = ['1920,1080', '1366,768', '1440,900', '1600,900',
 
 DOWNLOAD_DIR = os.path.join(os.getcwd(), 'downloads')
 
+extensions_dir = os.path.join(os.getcwd(), 'extensions')
+extension_files = [f for f in os.listdir(extensions_dir) if f.endswith('.crx')]
+popular_sites = [
+    "vnexpress.net",      
+    "zalo.me",            
+    "shopee.vn",          
+    "dienmayxanh.com",  
+    "viettel.com.vn",     
+    "fpt.com.vn",         
+    "vingroup.net",       
+    "momo.vn",            
+    "baomoi.com",         
+    "tiki.vn",            
+    "vinmec.com",         
+    "vietjetair.com",
+    "benhvienk.vn", 
+    "vtv.vn",             
+    "congcaphe.com",       
+    "khanggia.com",    
+    "bigc.vn",  
+    "vnews.gov.vn",         
+    "vnpt.com.vn",        
+    "onemount.com"         
+]
 
 def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options = Options()
@@ -67,7 +93,7 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options.add_argument("--disable-component-update")
     options.add_argument("--disable-default-apps")
     options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-extensions")
+    # options.add_argument("--disable-extensions")
     options.add_argument("--disable-features=Translate,BackForwardCache,AutofillSaveCard,InterestFeedContentSuggestions")
     options.add_argument("--disable-hang-monitor")
     options.add_argument("--disable-ipc-flooding-protection")
@@ -85,11 +111,18 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options.add_argument("--remote-debugging-pipe")
     options.add_argument("--enable-automation") 
 
+    # Add extensions
+    selected_extensions = random.sample(extension_files, random.randint(3, 5))
+    for extension_path in selected_extensions:
+        options.add_extension(os.path.join(extensions_dir, extension_path))
+        logger.info(f"Extension installed: {extension_path}")
+
     # # Custom chromedriver path on windows
-    # chromedriver_path = './driver/chromedriver.exe'
-    # driver = webdriver.Chrome(options=options, executable_path=chromedriver_path)
+    # service = Service(executable_path='./driver/chromedriver.exe')
+    # driver = webdriver.Chrome(options=options, service=service)
     driver = webdriver.Chrome(options=options)
 
+    # Bypassing automation detection
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
         "source": """
             Object.defineProperty(navigator, 'webdriver', {
@@ -99,6 +132,24 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     })
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
+    # Load site and add history
+    history_sites = random.sample(popular_sites, random.randint(6, 10))
+    for site in history_sites:
+        # Open each site in a new tab
+        driver.execute_script(f"window.open('https://{site}', '_blank');") 
+        driver.switch_to.window(driver.window_handles[-1]) 
+        time.sleep(3)
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])         
+        time.sleep(1)
+        logger.info(f"History simulated for {site}")
+    
+    for handle in driver.window_handles[1:]:
+        driver.switch_to.window(handle)
+        time.sleep(1)
+        driver.close()
+
+    driver.switch_to.window(driver.window_handles[0])
     logger.info(f"Chrome driver has been created with UA {user_agent} and proxy {proxy}")
     return driver
 
