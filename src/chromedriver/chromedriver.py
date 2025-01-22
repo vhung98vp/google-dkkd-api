@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.service import Service
 from fake_useragent import UserAgent
 from .proxies import get_proxy
 from ..logger_config import get_logger
-from simulate_browsing import simulate_browsing
+from .simulate_browsing import simulate_browsing
 
 logger = get_logger(__name__)
 

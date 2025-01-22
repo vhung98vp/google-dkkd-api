@@ -29,7 +29,7 @@ popular_sites = [
 ]
 
 def simulate_browsing(driver, total):
-    for _ in range(len(total)):
+    for _ in range(total):
         # Open each site in a new tab
         site = random.choice(popular_sites)
         driver.execute_script(f"window.open('https://{site}', '_blank');") 
