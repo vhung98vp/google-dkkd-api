@@ -3,11 +3,13 @@ from src.browser_search.bcdt_search import get_pdfs_from_site
 from src.browser_search.google_search import get_company_identity
 # from src.google_search.search import get_company_identity
 from src.chromedriver.chromedriver import get_driver, reset_driver
+from src.chromedriver.simulate_browsing import simulate_browsing
 # from src.ocr.extract_data import extract_data_from_pdfs
 from src.gemini_api.gemini import extract_data_from_pdfs
 from src.mst.company_data import get_company_info_from_site
 from src.logger_config import get_logger
 import time
+import random
 
 app_driver = get_driver()
 logger = get_logger(__name__)
@@ -51,6 +53,9 @@ def search_company():
         logger.info(f"Searching for company {company_name}...")
         start = time.time()
         # Cases for params
+
+        simulate_browsing(app_driver, random.randint(2,5))
+
         if search_engine == 'google':   # Using google-mst
             if search_type == 'quick':
                 # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
