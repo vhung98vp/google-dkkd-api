@@ -112,7 +112,7 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options.add_argument("--enable-automation") 
 
     # Add extensions
-    selected_extensions = random.sample(extension_files, random.randint(3, 5))
+    selected_extensions = random.sample(extension_files, random.randint(4, 6))
     for extension_path in selected_extensions:
         options.add_extension(os.path.join(extensions_dir, extension_path))
         logger.info(f"Extension installed: {extension_path}")
