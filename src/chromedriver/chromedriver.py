@@ -117,8 +117,8 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
 
     # Load site and add history
     simulate_browsing(driver, random.randint(10, 15))
-    simulate_dkkd(driver)
-    
+    simulate_dkkd(driver, random.randint(3, 5))
+
     for handle in driver.window_handles[1:]:
         driver.switch_to.window(handle)
         time.sleep(1)

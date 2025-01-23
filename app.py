@@ -3,7 +3,7 @@ from src.browser_search.bcdt_search import get_pdfs_from_site
 from src.browser_search.google_search import get_company_identity
 # from src.google_search.search import get_company_identity
 from src.chromedriver.chromedriver import get_driver, reset_driver
-from src.chromedriver.simulate_browsing import simulate_browsing
+from src.chromedriver.simulate_browsing import simulate_browsing, simulate_dkkd
 # from src.ocr.extract_data import extract_data_from_pdfs
 from src.gemini_api.gemini import extract_data_from_pdfs
 from src.mst.company_data import get_company_info_from_site
@@ -112,7 +112,8 @@ def search_company():
             tax_id = company_idt["company_tax_id"]
             logger.info(f'Get company tax id {tax_id} in time (s): {time.time() - start:.6f}')
             
-            simulate_browsing(app_driver, random.randint(1, 4))
+            simulate_browsing(app_driver, random.randint(1, 3))
+            simulate_dkkd(app_driver, random.randint(1, 3))
             logger.info(f"Receiving PDFs from site dkkd with tax_id {tax_id}...")
             pdfs = retry_request(lambda: get_pdfs_from_site(app_driver, tax_id, count, ann_type))
 

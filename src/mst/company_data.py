@@ -70,7 +70,7 @@ def get_company_info_from_site(company_url, driver=None):
 
     # Extract company data (assumes specific HTML structure, adjust selectors as needed)
     company_info = extract_soup_from_table(soup)
-    logger.info(f'Got company data from mst in time (s): {time.time() - start:.6f}')
+    logger.info(f'Get company data from mst in time (s): {time.time() - start:.6f}')
 
     if company_info:
         # Get associated company urls
@@ -91,7 +91,7 @@ def get_company_info_from_site(company_url, driver=None):
             company_info['associated'].append(asc_data)
             time.sleep(0.5)
         
-        logger.info(f'Got associated company data from mst in time (s): {time.time() - start:.6f}')
+        logger.info(f'Get associated company data from mst in time (s): {time.time() - start:.6f}')
         return company_info 
     
     else:

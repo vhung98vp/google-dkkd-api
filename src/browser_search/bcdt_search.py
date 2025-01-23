@@ -12,6 +12,7 @@ logger = get_logger(__name__)
 
 DOWNLOAD_DIR = os.path.join(os.getcwd(), 'downloads')
 
+BCDT_PAGE_HOME = 'https://bocaodientu.dkkd.gov.vn/egazette'
 BCDT_PAGE_URL = 'https://bocaodientu.dkkd.gov.vn/egazette/Forms/Egazette/ANNOUNCEMENTSListingInsUpd.aspx'
 announcement_type_filter_key = "ctl00$C$ANNOUNCEMENT_TYPE_IDFilterFld"
 
@@ -67,6 +68,8 @@ def get_pdfs_from_site(driver, company_tax_id: str, count=1, announcement_type="
     # Get page contents
     start = time.time()
 
+    driver.get(BCDT_PAGE_HOME)
+    time.sleep(2)
     driver.get(BCDT_PAGE_URL)
     # Avoid redirect to login page
     if driver.current_url != BCDT_PAGE_URL:
