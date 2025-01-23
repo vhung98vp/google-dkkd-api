@@ -53,8 +53,7 @@ dkkd_sites = [
     "dichvuthongtin.dkkd.gov.vn",
     "dangkyquamang.dkkd.gov.vn",
     "hokinhdoanh.dkkd.gov.vn",
-    "bocaodientu.dkkd.gov.vn",
-    "bocaodientu.dkkd.gov.vn/egazette/Forms/Egazette/ANNOUNCEMENTSListingInsUpd.aspx",
+    "bocaodientu.dkkd.gov.vn"
 ]
 
 def simulate_browsing(driver, total=1):
@@ -74,7 +73,7 @@ def simulate_dkkd(driver):
     for index, site in enumerate(dkkd_sites):
         driver.execute_script(f"window.open('https://{site}', '_blank');") 
         driver.switch_to.window(driver.window_handles[-1]) 
-        time.sleep(random.randint(4,8)/2 + index)
+        time.sleep(random.randint(4,8)/2)
         driver.close()
         driver.switch_to.window(driver.window_handles[0])         
         time.sleep(1)
