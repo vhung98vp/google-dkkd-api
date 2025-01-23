@@ -112,7 +112,7 @@ def search_company():
             tax_id = company_idt["company_tax_id"]
             logger.info(f'Get company tax id {tax_id} in time (s): {time.time() - start:.6f}')
             
-            simulate_browsing(app_driver, random.randint(1, 3))
+            simulate_browsing(app_driver, random.randint(0, 2))
             simulate_dkkd(app_driver, random.randint(1, 3))
             logger.info(f"Receiving PDFs from site dkkd with tax_id {tax_id}...")
             pdfs = retry_request(lambda: get_pdfs_from_site(app_driver, tax_id, count, ann_type))
