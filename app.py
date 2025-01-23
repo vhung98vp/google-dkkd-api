@@ -10,9 +10,15 @@ from src.mst.company_data import get_company_info_from_site
 from src.logger_config import get_logger
 import time
 import random
+from threading import Thread
+
 
 app_driver = get_driver()
 logger = get_logger(__name__)
+
+ANNOUNCEMENT_TYPE = ["NEW", "AMEND", "CORP", "OTHER", "CHANTC", "REVOKE"]
+# ĐK mới, ĐK thay đổi, Giải thể, Loại khác, TB thay đổi, Vi phạm/Thu hồi
+
 
 def retry_request(func, max_retries=1, delay_in_seconds=2):
     for attempt in range(max_retries + 1):
@@ -27,8 +33,12 @@ def retry_request(func, max_retries=1, delay_in_seconds=2):
             else:
                 raise e
 
-ANNOUNCEMENT_TYPE = ["NEW", "AMEND", "CORP", "OTHER", "CHANTC", "REVOKE"]
-# ĐK mới, ĐK thay đổi, Giải thể, Loại khác, TB thay đổi, Vi phạm/Thu hồi
+def reset_driver_async():
+    def reset():
+        global app_driver
+        app_driver = reset_driver(app_driver)
+    Thread(target=reset).start()
+
 
 app = Flask(__name__)
 
@@ -58,10 +68,11 @@ def search_company():
 
         logger.info(f"Searching for company {company_name}...")
         start = time.time()
+
+        # Simulate browsing before load google
+        simulate_browsing(app_driver, random.randint(0, 2))
+
         # Cases for params
-
-        simulate_browsing(app_driver, random.randint(2,4))
-
         if search_engine == 'google':   # Using google-mst
             if search_type == 'quick':
                 # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
@@ -101,6 +112,7 @@ def search_company():
             tax_id = company_idt["company_tax_id"]
             logger.info(f'Get company tax id {tax_id} in time (s): {time.time() - start:.6f}')
             
+            simulate_browsing(app_driver, random.randint(1, 4))
             logger.info(f"Receiving PDFs from site dkkd with tax_id {tax_id}...")
             pdfs = retry_request(lambda: get_pdfs_from_site(app_driver, tax_id, count, ann_type))
 
@@ -120,7 +132,7 @@ def search_company():
             return response_error("Invaid search engine")
     except Exception as e:
         logger.error(f"Exception while processing request for company {company_name}: {e}")
-        app_driver = reset_driver(app_driver)
+        reset_driver_async()
         return response_error(f"An error occurred: {e}", 500)
 
 if __name__ == "__main__":

@@ -2,6 +2,11 @@ import requests
 import time
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
+import time
+from ..logger_config import get_logger
+
+logger = get_logger(__name__)
+
 
 KEYS_TO_EXTRACT = ["Tên đầy đủ", "Tên quốc tế", "Tên viết tắt", "Mã số thuế", "Địa chỉ", "Người đại diện", "Điện thoại"]
 KEYS_DICT = {
@@ -48,6 +53,8 @@ def extract_soup_from_table(soup):
 
 
 def get_company_info_from_site(company_url, driver=None):
+    start = time.time()
+
     # Get page source from company_url
     if driver:
         driver.get(company_url)
@@ -63,6 +70,7 @@ def get_company_info_from_site(company_url, driver=None):
 
     # Extract company data (assumes specific HTML structure, adjust selectors as needed)
     company_info = extract_soup_from_table(soup)
+    logger.info(f'Got company data from mst in time (s): {time.time() - start:.6f}')
 
     if company_info:
         # Get associated company urls
@@ -83,6 +91,7 @@ def get_company_info_from_site(company_url, driver=None):
             company_info['associated'].append(asc_data)
             time.sleep(0.5)
         
+        logger.info(f'Got associated company data from mst in time (s): {time.time() - start:.6f}')
         return company_info 
     
     else:

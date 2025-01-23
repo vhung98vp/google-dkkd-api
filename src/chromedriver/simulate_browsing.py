@@ -48,13 +48,13 @@ popular_sites = [
     "cafef.vn"
 ]
 
-def simulate_browsing(driver, total):
+def simulate_browsing(driver, total=1):
     for _ in range(total):
         # Open each site in a new tab
         site = random.choice(popular_sites)
         driver.execute_script(f"window.open('https://{site}', '_blank');") 
         driver.switch_to.window(driver.window_handles[-1]) 
-        time.sleep(5)
+        time.sleep(random.randint(4,8)/2)
         driver.close()
         driver.switch_to.window(driver.window_handles[0])         
         time.sleep(1)
