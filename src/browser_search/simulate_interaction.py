@@ -32,3 +32,4 @@ def simulate_interaction(driver, xpath_list):
     simulate_delay()
     element.click()
     simulate_delay()
+    element.click()

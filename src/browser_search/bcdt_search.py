@@ -78,6 +78,7 @@ def get_pdfs_from_site(driver, company_tax_id: str, count=1, announcement_type="
     logger.info(f'Load site dkkd in time (s): {time.time() - start:.6f}')
 
     simulate_interaction(driver, xpath_list)
+    simulate_interaction(driver, xpath_list)
     logger.info(f'Simulated interaction in time (s): {time.time() - start:.6f}')
     ## Fill options
     # Announcement type

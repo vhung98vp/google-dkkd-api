@@ -71,10 +71,10 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     options.add_argument("--disable-breakpad")
     options.add_argument("--disable-client-side-phishing-detection")
     options.add_argument("--disable-component-update")
-    options.add_argument("--disable-default-apps")
+    # options.add_argument("--disable-default-apps")
     options.add_argument("--disable-dev-shm-usage")
     # options.add_argument("--disable-extensions")
-    options.add_argument("--disable-features=Translate,BackForwardCache,AutofillSaveCard,InterestFeedContentSuggestions")
+    # options.add_argument("--disable-features=Translate,BackForwardCache,AutofillSaveCard,InterestFeedContentSuggestions")
     options.add_argument("--disable-hang-monitor")
     options.add_argument("--disable-ipc-flooding-protection")
     options.add_argument("--disable-popup-blocking")
@@ -116,7 +116,7 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
     # Load site and add history
-    simulate_browsing(driver, random.randint(10, 15))
+    simulate_browsing(driver, random.randint(10, 20))
     simulate_dkkd(driver, random.randint(3, 5))
 
     for handle in driver.window_handles[1:]:
