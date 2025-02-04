@@ -51,7 +51,7 @@ def get_company_identity(driver, company_name, site_url):
         return {"search.html": driver.page_source}
     
     logger.info(f'Get first url in time (s): {time.time() - start:.6f}')
-    company_tax_id = re.search(r'\d+', company_url).group()
+    company_tax_id = re.search(r'(\d{10}(?:-\d{3})?)', company_url).group()
     return {
         "company_tax_id": company_tax_id,
         "url": company_url

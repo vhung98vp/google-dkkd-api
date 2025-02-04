@@ -109,7 +109,7 @@ def search_company():
             if not company_idt:
                 return response_error(f"No results found for {company_name} on {site_url}", 404)
             
-            tax_id = company_idt["company_tax_id"]
+            tax_id = company_idt["company_tax_id"].split('-')[0]
             logger.info(f'Get company tax id {tax_id} in time (s): {time.time() - start:.6f}')
             
             simulate_browsing(app_driver, random.randint(0, 2))
