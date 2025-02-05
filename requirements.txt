@@ -7,6 +7,7 @@ python-dotenv
 google-generativeai
 beautifulsoup4
 gunicorn
+gevent
 # undetected_chromedriver
 # pymupdf
 # easyocr
