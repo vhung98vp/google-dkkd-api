@@ -78,7 +78,7 @@ def search_company():
                 # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
                 company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
                 if not company_idt:
-                    return response_error(f"No results found for {company_name} on {site_url}", 404)
+                    return response_error(f"No results found for {company_name} on {site_url}", 204)
                 
                 logger.info(f'Quick search google for {company_name} in time (s): {time.time() - start:.6f}')
                 return company_idt
@@ -86,7 +86,7 @@ def search_company():
                 # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
                 company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
                 if not company_idt:
-                    return response_error(f"No results found for {company_name} on {site_url}", 404)
+                    return response_error(f"No results found for {company_name} on {site_url}", 204)
                 
                 company_info = get_company_info_from_site(company_idt["url"], app_driver)
                 logger.info(f'Full search google & mst for {company_name} in time (s): {time.time() - start:.6f}')
@@ -107,7 +107,7 @@ def search_company():
             # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
             company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
             if not company_idt:
-                return response_error(f"No results found for {company_name} on {site_url}", 404)
+                return response_error(f"No results found for {company_name} on {site_url}", 204)
             
             tax_id = company_idt["company_tax_id"].split('-')[0]
             logger.info(f'Get company tax id {tax_id} in time (s): {time.time() - start:.6f}')
@@ -123,7 +123,7 @@ def search_company():
                 pdfs = retry_request(lambda: get_pdfs_from_site(app_driver, tax_id, count, 'NEW'))
 
             if not pdfs:
-                return response_error(f"Request empty. Check type and company tax id: {tax_id}", 404)
+                return response_error(f"Request empty. Check type and company tax id: {tax_id}", 204)
             else:
                 logger.info(f'Received {len(pdfs)} PDF(s) from site dkkd in time (s): {time.time() - start:.6f}')
                 extracted_data = extract_data_from_pdfs(pdfs)
