@@ -103,7 +103,7 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
         service = Service(executable_path='./driver/chromedriver.exe')
         driver = webdriver.Chrome(options=options, service=service)
     else:
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(options=options, keep_alive=False)
 
     # Bypassing automation detection
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
@@ -141,6 +141,7 @@ def reset_driver(driver):
         new_driver = get_driver()
     except Exception as e:
         logger.error("Error, Fail to setup new driver: ", e)
+        return None
 
     logger.info("Driver has been reset...")
     return new_driver

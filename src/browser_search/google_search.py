@@ -46,6 +46,8 @@ def get_company_identity(driver, company_name, site_url):
             logger.error(f"Exception when trying to solve captcha on site google: {e}")
             if "Google has detected automated queries" in str(e):
                 raise e
+            elif "Unable to locate element" in str(e):
+                return {"search.html": driver.page_source}
 
     if not company_url:
         return {"search.html": driver.page_source}
