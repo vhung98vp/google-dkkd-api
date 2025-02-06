@@ -11,9 +11,16 @@ from src.logger_config import get_logger
 import time
 import random
 from threading import Thread
+from queue import Queue
 
 
-app_driver = get_driver()
+NUM_BROWSER = 3
+driver_pool = Queue()
+
+for _ in range(NUM_BROWSER):
+    driver_pool.put(get_driver())
+
+# app_driver = get_driver()
 logger = get_logger(__name__)
 
 ANNOUNCEMENT_TYPE = ["NEW", "AMEND", "CORP", "OTHER", "CHANTC", "REVOKE"]
@@ -33,10 +40,12 @@ def retry_request(func, max_retries=1, delay_in_seconds=2):
             else:
                 raise e
 
-def reset_driver_async():
+def reset_driver_async(app_driver):
     def reset():
-        global app_driver
-        app_driver = reset_driver(app_driver)
+        # global app_driver
+        # app_driver = reset_driver(app_driver)
+        new_driver = reset_driver(app_driver)
+        driver_pool.put(new_driver)
     Thread(target=reset).start()
 
 
@@ -53,7 +62,10 @@ def manage_health():
 
 @app.route('/search', methods=['GET'])
 def search_company():
-    global app_driver
+    # global app_driver
+    app_driver = driver_pool.get()
+    get_exception = False
+
     try:
         # Site and company for searching
         site_url = "masothue.com"
@@ -130,11 +142,15 @@ def search_company():
                 logger.info(f'Extracted data in time (s): {time.time() - start:.6f}')
                 return jsonify(extracted_data)
         else:
-            return response_error("Invaid search engine")
+            return response_error("Invaid search engine")        
     except Exception as e:
         logger.error(f"Exception while processing request for company {company_name}: {e}")
-        reset_driver_async()
+        reset_driver_async(app_driver)
+        get_exception = True
         return response_error(f"An error occurred: {e}", 500)
+    finally:
+        if not get_exception:
+            driver_pool.put(app_driver)
 
 if __name__ == "__main__":
     app.run(debug=True)
