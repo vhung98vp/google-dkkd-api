@@ -32,6 +32,7 @@ extension_files = [f for f in os.listdir(extensions_dir) if f.endswith('.crx')]
 
 
 def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
+    logger.info(f"Chrome driver is being initialized...")
     options = Options()
     # user_agent = random.choice(USER_AGENT_LIST)
     user_agent = UserAgent(platforms='desktop').random
@@ -125,7 +126,7 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
         driver.close()
 
     driver.switch_to.window(driver.window_handles[0])
-    logger.info(f"Chrome driver has been created with UA {user_agent} and proxy {proxy}")
+    logger.info(f"Chromedriver session {driver.session_id} has been created with UA {user_agent} and proxy {proxy}")
     return driver
 
 def reset_driver(driver):

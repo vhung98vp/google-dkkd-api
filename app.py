@@ -78,7 +78,7 @@ def search_company():
         search_engine = request.args.get('engine', 'google')
         ann_type = request.args.get('ann_type', 'AMEND')
 
-        logger.info(f"Searching for company {company_name}...")
+        logger.info(f"Searching for company {company_name} with driver session {app_driver.session_id}...")
         start = time.time()
 
         # Simulate browsing before load google
