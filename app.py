@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 from src.browser_search.bcdt_search import get_pdfs_from_site
 from src.browser_search.google_search import get_company_identity
 # from src.google_search.search import get_company_identity
-from src.chromedriver.chromedriver import get_driver, reset_driver
+# from src.chromedriver.chromedriver import get_driver, reset_driver
+from src.chromedriver.driver_pool import get_driver_pool, reset_driver_async
 from src.chromedriver.simulate_browsing import simulate_browsing, simulate_dkkd
 # from src.ocr.extract_data import extract_data_from_pdfs
 from src.gemini_api.gemini import extract_data_from_pdfs
@@ -10,22 +11,15 @@ from src.mst.company_data import get_company_info_from_site
 from src.logger_config import get_logger
 import time
 import random
-from threading import Thread
-from queue import Queue
 
 
-NUM_BROWSER = 3
-driver_pool = Queue()
-
-for _ in range(NUM_BROWSER):
-    driver_pool.put(get_driver())
-
-# app_driver = get_driver()
 logger = get_logger(__name__)
 
 ANNOUNCEMENT_TYPE = ["NEW", "AMEND", "CORP", "OTHER", "CHANTC", "REVOKE"]
 # ĐK mới, ĐK thay đổi, Giải thể, Loại khác, TB thay đổi, Vi phạm/Thu hồi
 
+
+driver_pool = get_driver_pool()
 
 def retry_request(func, max_retries=1, delay_in_seconds=2):
     for attempt in range(max_retries + 1):
@@ -39,14 +33,6 @@ def retry_request(func, max_retries=1, delay_in_seconds=2):
                 time.sleep(delay_in_seconds * (2 ** attempt))  # Exponential backoff (2s, 4s, 8s)
             else:
                 raise e
-
-def reset_driver_async(app_driver):
-    def reset():
-        # global app_driver
-        # app_driver = reset_driver(app_driver)
-        new_driver = reset_driver(app_driver)
-        driver_pool.put(new_driver)
-    Thread(target=reset).start()
 
 
 app = Flask(__name__)
@@ -63,7 +49,6 @@ def manage_health():
 @app.route('/search', methods=['GET'])
 def search_company():
     # global app_driver
-    app_driver = driver_pool.get()
     get_exception = False
 
     try:
@@ -78,6 +63,7 @@ def search_company():
         search_engine = request.args.get('engine', 'google')
         ann_type = request.args.get('ann_type', 'AMEND')
 
+        app_driver = driver_pool.get()
         logger.info(f"Searching for company {company_name} with driver session {app_driver.session_id}...")
         start = time.time()
 
@@ -87,7 +73,6 @@ def search_company():
         # Cases for params
         if search_engine == 'google':   # Using google-mst
             if search_type == 'quick':
-                # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
                 company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
                 if not company_idt:
                     return response_error(f"No results found for {company_name} on {site_url}", 204)
@@ -95,7 +80,6 @@ def search_company():
                 logger.info(f'Quick search google for {company_name} in time (s): {time.time() - start:.6f}')
                 return company_idt
             elif search_type == 'full':
-                # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
                 company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
                 if not company_idt:
                     return response_error(f"No results found for {company_name} on {site_url}", 204)
@@ -116,7 +100,6 @@ def search_company():
             if ann_type not in ANNOUNCEMENT_TYPE:
                 return response_error("Invaid announcement type")
             
-            # company_idt = retry_request(lambda: get_company_identity(company_name, site_url))
             company_idt = retry_request(lambda: get_company_identity(app_driver, company_name, site_url))
             if not company_idt:
                 return response_error(f"No results found for {company_name} on {site_url}", 204)
@@ -145,7 +128,7 @@ def search_company():
             return response_error("Invaid search engine")        
     except Exception as e:
         logger.error(f"Exception while processing request for company {company_name}: {e}")
-        reset_driver_async(app_driver)
+        reset_driver_async(driver_pool, app_driver)
         get_exception = True
         return response_error(f"An error occurred: {e}", 500)
     finally:

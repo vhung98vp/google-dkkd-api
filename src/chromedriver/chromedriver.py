@@ -130,6 +130,7 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     return driver
 
 def reset_driver(driver):
+    logger.info("Driver is being reset...")
     if driver:
         try:
             driver.close()
