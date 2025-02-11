@@ -37,7 +37,7 @@ def reset_proxy(current_proxy):
     proxy_server = os.getenv('PROXY_SERVER')
     if current_proxy and proxy_server:
         try:
-            _, port = current_proxy.split(":")
+            port = current_proxy.split(":")[-1]
             response = requests.get(f"{proxy_server}/reset?proxy={port}")
             time.sleep(5)
             if response.status_code == 200:
