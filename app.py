@@ -3,7 +3,7 @@ from src.browser_search.bcdt_search import get_pdfs_from_site
 from src.browser_search.google_search import get_company_identity
 # from src.google_search.search import get_company_identity
 # from src.chromedriver.chromedriver import get_driver, reset_driver
-from src.chromedriver.driver_pool import get_driver_pool, reset_driver_async
+from src.chromedriver.driver_pool import get_driver_pool, reset_driver_async, add_driver_to_pool_async
 from src.chromedriver.simulate_browsing import simulate_browsing, simulate_dkkd
 # from src.ocr.extract_data import extract_data_from_pdfs
 from src.gemini_api.gemini import extract_data_from_pdfs
@@ -44,6 +44,18 @@ def response_error(message, code=400):
 @app.route('/manage/health', methods=['GET'])
 def manage_health():
     return jsonify({"message": "Service is working"}), 200
+
+
+@app.route('/driver/get', methods=['GET'])
+def manage_driver():
+    current_size = driver_pool.qsize()
+    return jsonify({"message": f"Total driver is working: {current_size}"}), 200
+
+
+@app.route('/driver/add', methods=['GET'])
+def add_driver():
+    add_size = add_driver_to_pool_async(driver_pool)
+    return jsonify({"message": f"Total driver is adding to pool: {add_size}"}), 201
 
 
 @app.route('/search', methods=['GET'])
