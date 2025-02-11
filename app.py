@@ -62,8 +62,7 @@ def search_company():
         search_type = request.args.get('type', 'quick')
         search_engine = request.args.get('engine', 'google')
         ann_type = request.args.get('ann_type', 'AMEND')
-
-        app_driver = driver_pool.get()
+        app_driver, current_proxy = driver_pool.get()
         logger.info(f"Searching for company {company_name} with driver session {app_driver.session_id}...")
         start = time.time()
 
@@ -128,12 +127,12 @@ def search_company():
             return response_error("Invaid search engine")        
     except Exception as e:
         logger.error(f"Exception while processing request for company {company_name}: {e}")
-        reset_driver_async(driver_pool, app_driver)
+        reset_driver_async(driver_pool, app_driver, current_proxy)
         get_exception = True
         return response_error(f"An error occurred: {e}", 500)
     finally:
         if not get_exception:
-            driver_pool.put(app_driver)
+            driver_pool.put((app_driver, current_proxy))
 
 if __name__ == "__main__":
     app.run(debug=True)

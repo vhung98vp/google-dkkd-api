@@ -116,6 +116,11 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     })
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
+    if proxy:
+        driver.get("https://api.ipify.org")  # A simple service to get the IP
+        ip_address = driver.find_element("tag name", "body").text  # Extract IP
+        logger.info(f"Current IP address: {ip_address}")
+
     # Load site and add history
     simulate_browsing(driver, random.randint(10, 20))
     simulate_dkkd(driver, random.randint(2, 4))
@@ -129,7 +134,7 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     logger.info(f"Chromedriver session {driver.session_id} has been created with UA {user_agent} and proxy {proxy}")
     return driver
 
-def reset_driver(driver):
+def reset_driver(driver, proxy):
     logger.info("Driver is being reset...")
     if driver:
         try:
@@ -140,7 +145,7 @@ def reset_driver(driver):
             logger.error("Error, Fail to close driver: ", e)
     
     try:
-        new_driver = get_driver()
+        new_driver = get_driver(proxy=proxy)
     except Exception as e:
         logger.error("Error, Fail to setup new driver: ", e)
         return None
