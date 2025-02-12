@@ -39,13 +39,16 @@ def extract_data_from_pdfs(pdfs_path):
     load_dotenv()
     api_key = os.getenv('API_KEY')
     prompt = os.getenv('PROMPT')
-    genai.configure(api_key=api_key)
+    if api_key and prompt:
+        genai.configure(api_key=api_key)
 
-    # Read and encode local files
-    docs_data = read_pdf_files(pdfs_path)
+        # Read and encode local files
+        docs_data = read_pdf_files(pdfs_path)
 
-    # Call gemini model and return result
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    response = model.generate_content([prompt, *docs_data])
+        # Call gemini model and return result
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content([prompt, *docs_data])
 
-    return clean_json_response(response.text)
+        return clean_json_response(response.text)
+    else:
+        return {"message": "Gemini env not configured"}

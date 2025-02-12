@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 def get_proxy():
     # Get env file
     load_dotenv()
-    proxy_server = os.getenv('PROXY_SERVER')
+    proxy_server = os.getenv('PROXY_SERVER', '')
     match = re.match(r"(http|https)://([^/:]+)", proxy_server)
     if match:
         try:
