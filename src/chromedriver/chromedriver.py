@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.service import Service
 from fake_useragent import UserAgent
 from .proxies import get_proxy
 from ..logger_config import get_logger
-from .simulate_browsing import simulate_browsing, simulate_dkkd
+from .simulate_browsing import simulate_browsing
 
 logger = get_logger(__name__)
 
@@ -123,7 +123,7 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
 
     # Load site and add history
     simulate_browsing(driver, random.randint(10, 20))
-    simulate_dkkd(driver, random.randint(2, 4))
+    simulate_browsing(driver, random.randint(2, 4), True)
 
     for handle in driver.window_handles[1:]:
         driver.switch_to.window(handle)

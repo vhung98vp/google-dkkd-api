@@ -51,5 +51,6 @@ def reset_driver_async(driver_pool: Queue, app_driver, current_proxy):
         logger.info(f"Reseting driver and proxy...")
         new_proxy = reset_proxy(current_proxy=current_proxy)
         new_driver = reset_driver(app_driver, new_proxy)
-        driver_pool.put((new_driver, new_proxy))
+        if new_driver:
+            driver_pool.put((new_driver, new_proxy))
     Thread(target=reset).start()

@@ -57,26 +57,19 @@ dkkd_sites = [
     "bocaodientu.dkkd.gov.vn/egazette"
 ]
 
-def simulate_browsing(driver, total=1):
+def simulate_browsing(driver, total=1, dkkd=False):
+    sites = dkkd_sites if dkkd else popular_sites
     for _ in range(total):
         # Open each site in a new tab
-        site = random.choice(popular_sites)
-        driver.execute_script(f"window.open('https://{site}', '_blank');") 
-        driver.switch_to.window(driver.window_handles[-1]) 
-        time.sleep(random.randint(4,8)/2)
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])         
-        time.sleep(1)
-        logger.info(f"History simulated for {site}")
+        site = random.choice(sites)
+        try:
+            driver.execute_script(f"window.open('https://{site}', '_blank');") 
+            driver.switch_to.window(driver.window_handles[-1]) 
+            time.sleep(random.randint(4,8)/2)
+            driver.close()
+            driver.switch_to.window(driver.window_handles[0])         
+            time.sleep(1)
+            logger.info(f"History simulated for {site}")
+        except Exception as e:
+            logger.error(f"Error while processing simulate for site {site}: {e}")
 
-
-def simulate_dkkd(driver, total=1):
-    driver.execute_script(f"window.open('https://{dkkd_sites[0]}', '_blank');") 
-    driver.switch_to.window(driver.window_handles[-1]) 
-    for _ in range(total):
-        site = random.choice(dkkd_sites)
-        time.sleep(random.randint(4,8)/2)
-        driver.get(f"https://{site}") 
-        logger.info(f"History simulated for {site}")
-    driver.close()
-    driver.switch_to.window(driver.window_handles[0])
