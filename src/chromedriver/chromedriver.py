@@ -116,10 +116,12 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     })
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-    if proxy:
+    try:
         driver.get("https://api.ipify.org")  # A simple service to get the IP
         ip_address = driver.find_element("tag name", "body").text  # Extract IP
         logger.info(f"Current IP address: {ip_address}")
+    except Exception as e:
+        logger.error(f"Error while getting IP address: {e}")
 
     # Load site and add history
     simulate_browsing(driver, random.randint(10, 20))
