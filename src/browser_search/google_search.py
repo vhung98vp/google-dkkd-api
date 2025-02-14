@@ -1,6 +1,8 @@
 import re
 import time
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium_recaptcha_solver import RecaptchaSolver
 from .simulate_interaction import simulate_interaction
 from ..logger_config import get_logger
@@ -19,6 +21,14 @@ def get_company_identity(driver, company_name, site_url):
     # query = f"{company_name} site:{site_url}"
     query = f"{company_name} {site_url}"
     driver.get(f"https://www.google.com/search?q={query}&hl=vi")
+    try:
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//div[@id='search']"))
+        )
+    except Exception as e:
+        logger.error(f"Error while loading Google search page: {e}")
+        raise e
+
     logger.info(f'Load google in time (s): {time.time() - start:.6f}')
 
     # Get search result

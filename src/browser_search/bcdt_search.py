@@ -70,12 +70,29 @@ def get_pdfs_from_site(driver, company_tax_id: str, count=1, announcement_type="
 
     driver.get(BCDT_PAGE_HOME)
     time.sleep(2)
-    driver.get(BCDT_PAGE_URL)
-    # Avoid redirect to login page
-    if driver.current_url != BCDT_PAGE_URL:
-        driver.get(BCDT_PAGE_URL)   
+    
+    retry = 0
+    while retry < 3:
+        driver.get(BCDT_PAGE_URL)
+        try:
+            WebDriverWait(driver, 30).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+        except Exception as e:
+            logger.error(f"Error while loading dkkd page: {e}")
+            retry += 1
+            continue
 
-    logger.info(f'Load site dkkd in time (s): {time.time() - start:.6f}')
+        # Avoid redirect to login page
+        if driver.current_url != BCDT_PAGE_URL:
+            break
+        retry += 1
+        time.sleep(1)
+    
+    if driver.current_url != BCDT_PAGE_URL:
+        raise Exception(f"Cannot load site dkkd, current url: {driver.current_url}")
+
+    logger.info(f'Load site dkkd in time (s): {time.time() - start:.6f} after {retry} time(s)')
 
     simulate_interaction(driver, xpath_list)
     simulate_interaction(driver, xpath_list)
