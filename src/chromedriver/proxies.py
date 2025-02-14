@@ -51,4 +51,5 @@ def reset_proxy(current_proxy):
         except Exception as e:
             logger.error("Error, Fail to reset proxy: ", e)
     
-    return None
+    logger.error(f"Trying to get a new proxy...")
+    return get_proxy()
