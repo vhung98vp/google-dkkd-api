@@ -21,8 +21,8 @@ def get_company_identity(driver, company_name, site_url):
     
     # query = f"{company_name} site:{site_url}"
     query = f"{company_name} {site_url}"
-    driver.get(f"https://www.google.com/search?q={query}&hl=vi")
     try:
+        driver.get(f"https://www.google.com/search?q={query}&hl=vi")
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//div[@id='search']"))
         )
