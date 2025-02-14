@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
 import os
 import time
 from .simulate_interaction import simulate_interaction
@@ -78,10 +79,13 @@ def get_pdfs_from_site(driver, company_tax_id: str, count=1, announcement_type="
             WebDriverWait(driver, 30).until(
                 EC.presence_of_element_located((By.TAG_NAME, "body"))
             )
-        except Exception as e:
-            logger.error(f"Error while loading dkkd page: {e}")
+        except TimeoutException as e:
+            logger.error(f"Timeout while loading dkkd page: {e}")
             retry += 1
             continue
+        except Exception as e:
+            logger.error(f"Error while loading dkkd page: {e}")
+            raise e
 
         # Avoid redirect to login page
         if driver.current_url != BCDT_PAGE_URL:

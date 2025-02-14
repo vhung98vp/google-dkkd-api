@@ -3,6 +3,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from selenium_recaptcha_solver import RecaptchaSolver
 from .simulate_interaction import simulate_interaction
 from ..logger_config import get_logger
@@ -25,6 +26,9 @@ def get_company_identity(driver, company_name, site_url):
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//div[@id='search']"))
         )
+    except TimeoutException as e:
+        logger.error(f"Timeout while loading Google search page: {e}")
+        raise e
     except Exception as e:
         logger.error(f"Error while loading Google search page: {e}")
         raise e
