@@ -130,12 +130,12 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     simulate_browsing(driver, random.randint(10, 20))
     simulate_browsing(driver, random.randint(2, 4), True)
 
-    for handle in driver.window_handles[1:]:
+    for handle in driver.window_handles[2:]:
         driver.switch_to.window(handle)
         time.sleep(1)
         driver.close()
 
-    driver.switch_to.window(driver.window_handles[0])
+    driver.switch_to.window(driver.window_handles[1])
     logger.info(f"Chromedriver session {driver.session_id} has been created with UA {user_agent} and proxy {proxy}")
     return driver
 
