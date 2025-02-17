@@ -67,7 +67,7 @@ def simulate_browsing(driver, total=1, dkkd=False):
             driver.switch_to.window(driver.window_handles[-1]) 
             time.sleep(random.randint(4,8)/2)
             driver.close()
-            driver.switch_to.window(driver.window_handles[0])         
+            driver.switch_to.window(driver.window_handles[1])         
             time.sleep(1)
             logger.info(f"History simulated for {site}")
         except Exception as e:
