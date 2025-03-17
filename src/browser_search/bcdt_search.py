@@ -126,8 +126,8 @@ def get_pdfs_from_site(driver, company_tax_id: str, count=1, announcement_type="
     # Click search (filter) button
     driver.find_element(By.NAME, btn_filter_key).click()
 
-    # Wait 5s for the new page to load or result to appear
-    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+    # Wait 10s for the new page to load or result to appear
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, response_pdf_key)))
     
     # Response page with table of pdfs to download
     response_table = driver.find_element(By.ID, response_pdf_key)
