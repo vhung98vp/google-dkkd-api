@@ -95,8 +95,8 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
 
     # Add extensions
     selected_extensions = random.sample(extension_files, random.randint(5, 8))
-    if 'uBlockOrigin.crx' in extension_files and 'uBlockOrigin.crx' not in selected_extensions:
-        selected_extensions.append('uBlockOrigin.crx')
+    if 'uBlockOriginLite.crx' in extension_files and 'uBlockOriginLite.crx' not in selected_extensions:
+        selected_extensions.append('uBlockOriginLite.crx')
     
     for extension_path in selected_extensions:
         options.add_extension(os.path.join(extensions_dir, extension_path))
