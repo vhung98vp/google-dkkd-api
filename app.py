@@ -49,7 +49,8 @@ def manage_health():
 @app.route('/driver/get', methods=['GET'])
 def manage_driver():
     current_size = driver_pool.qsize()
-    return jsonify({"message": f"Total driver in pool: {current_size}"}), 200
+    current_proxies = [item[1] for item in driver_pool.queue]
+    return jsonify({"message": f"Total driver in pool: {current_size} with proxies {current_proxies}"}), 200
 
 
 @app.route('/driver/add', methods=['GET'])
