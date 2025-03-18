@@ -43,7 +43,6 @@ def reset_proxy(current_proxy):
             if response.status_code == 200:
                 if response.json().get("status"):
                     logger.info(f"Proxy port {port} successfully reset...")
-                    return current_proxy
                 else:
                     logger.info(f"Proxy port {port} not found!")
             else:
@@ -51,5 +50,5 @@ def reset_proxy(current_proxy):
         except Exception as e:
             logger.error("Error, Fail to reset proxy: ", e)
     
-    logger.error(f"Trying to get a new proxy...")
+    logger.error(f"Getting a new proxy...")
     return get_proxy()
