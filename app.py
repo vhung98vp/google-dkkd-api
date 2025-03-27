@@ -43,8 +43,12 @@ def response_error(message, code=400):
 
 @app.route('/manage/health', methods=['GET'])
 def manage_health():
-    return jsonify({"message": "Service is working"}), 200
+    return jsonify({"status": True}), 200
 
+@app.route('/driver/health', methods=['GET'])
+def driver_health():
+    status = driver_pool.qsize() > 0
+    return jsonify({"status": status}), 200
 
 @app.route('/driver/get', methods=['GET'])
 def manage_driver():
