@@ -1,6 +1,9 @@
 import re
 import time
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from selenium_recaptcha_solver import RecaptchaSolver
 from .simulate_interaction import simulate_interaction
 from ..logger_config import get_logger
@@ -18,7 +21,18 @@ def get_company_identity(driver, company_name, site_url):
     
     # query = f"{company_name} site:{site_url}"
     query = f"{company_name} {site_url}"
-    driver.get(f"https://www.google.com/search?q={query}&hl=vi")
+    try:
+        driver.get(f"https://www.google.com/search?q={query}&hl=vi")
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//div[@id='search']"))
+        )
+    except TimeoutException as e:
+        logger.error(f"Timeout while loading Google search page: {e}")
+        raise e
+    except Exception as e:
+        logger.error(f"Error while loading Google search page: {e}")
+        raise e
+
     logger.info(f'Load google in time (s): {time.time() - start:.6f}')
 
     # Get search result
@@ -34,18 +48,20 @@ def get_company_identity(driver, company_name, site_url):
     # Captcha solver if exist
     if not company_url:
         logger.info("Solving captcha while searching google...")
-        simulate_interaction(driver, xpath_list)
-        logger.info(f'Simulated interaction in time (s): {time.time() - start:.6f}')
         try:
+            simulate_interaction(driver, xpath_list)
+            logger.info(f'Simulated interaction in time (s): {time.time() - start:.6f}')
             solver = RecaptchaSolver(driver)
             recaptcha_iframe = driver.find_element(By.XPATH, '//iframe[@title="reCAPTCHA"]')
             solver.click_recaptcha_v2(iframe=recaptcha_iframe)
             logger.info(f"Solved captcha in time (s): {time.time() - start:.6f}")
             company_url = get_first_url()
         except Exception as e:
-            logger.error(f"Exception when trying to solve captcha on site dkkd: {e}")
+            logger.error(f"Exception when trying to solve captcha on site google: {e}")
             if "Google has detected automated queries" in str(e):
                 raise e
+            elif "Unable to locate element" in str(e):
+                return {"search.html": driver.page_source}
 
     if not company_url:
         return {"search.html": driver.page_source}

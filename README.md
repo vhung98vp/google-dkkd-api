@@ -8,7 +8,9 @@ This Flask-based API enables users to search for company information on the inte
 # Environment Configuration:
 - API_KEY (string, required with dkkd search): Gemini API key for authentication.
 - PROMPT (string, required with dkkd search): Custom prompt used to interact with Gemini.
-- PROXIES (string, optional): Comma-separated list of proxy URLs to use for searching with Google, to prevent bot detection errors.
+<!-- - PROXIES (string, optional): Comma-separated list of proxy URLs to use for searching with Google, to prevent bot detection errors. -->
+- PROXY_SERVER (string, optional): URL of the proxy server to route requests through, useful for bypassing restrictions or avoiding bot detection.
+- POOL_SIZE (integer, default 2): Number of concurrent threads or processes to use for handling requests, optimizing performance for high traffic.
 
 # Endpoints:
 [GET] /search

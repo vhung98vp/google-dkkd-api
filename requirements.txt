@@ -1,11 +1,13 @@
-regex
-selenium
-selenium_recaptcha_solver
-fake_useragent
-flask
-python-dotenv
-google-generativeai
-beautifulsoup4
+regex==2024.11.6
+selenium==4.8.3
+selenium_recaptcha_solver==1.9.0
+fake_useragent==2.0.3
+flask==3.1.0
+python-dotenv==1.0.1
+google-generativeai==0.8.4
+beautifulsoup4==4.13.3
+gunicorn==23.0.0
+gevent==24.11.1
 # undetected_chromedriver
 # pymupdf
 # easyocr

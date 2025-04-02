@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.service import Service
 from fake_useragent import UserAgent
 from .proxies import get_proxy
 from ..logger_config import get_logger
-from .simulate_browsing import simulate_browsing, simulate_dkkd
+from .simulate_browsing import simulate_browsing
 
 logger = get_logger(__name__)
 
@@ -32,6 +32,7 @@ extension_files = [f for f in os.listdir(extensions_dir) if f.endswith('.crx')]
 
 
 def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
+    logger.info(f"Chrome driver is being initialized...")
     options = Options()
     # user_agent = random.choice(USER_AGENT_LIST)
     user_agent = UserAgent(platforms='desktop').random
@@ -94,6 +95,9 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
 
     # Add extensions
     selected_extensions = random.sample(extension_files, random.randint(5, 8))
+    if 'uBlockOriginLite.crx' in extension_files and 'uBlockOriginLite.crx' not in selected_extensions:
+        selected_extensions.append('uBlockOriginLite.crx')
+    
     for extension_path in selected_extensions:
         options.add_extension(os.path.join(extensions_dir, extension_path))
         logger.info(f"Extension installed: {extension_path}")
@@ -115,20 +119,28 @@ def get_driver(download_dir=DOWNLOAD_DIR, open_gui=False, proxy=get_proxy()):
     })
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
+    try:
+        driver.get("https://api.ipify.org")  # A simple service to get the IP
+        ip_address = driver.find_element("tag name", "body").text  # Extract IP
+        logger.info(f"Current IP address: {ip_address}")
+    except Exception as e:
+        logger.error(f"Error while getting IP address: {e}")
+
     # Load site and add history
     simulate_browsing(driver, random.randint(10, 20))
-    simulate_dkkd(driver, random.randint(2, 4))
+    simulate_browsing(driver, random.randint(2, 4), True)
 
-    for handle in driver.window_handles[1:]:
+    for handle in driver.window_handles[2:]:
         driver.switch_to.window(handle)
         time.sleep(1)
         driver.close()
 
-    driver.switch_to.window(driver.window_handles[0])
-    logger.info(f"Chrome driver has been created with UA {user_agent} and proxy {proxy}")
+    driver.switch_to.window(driver.window_handles[1])
+    logger.info(f"Chromedriver session {driver.session_id} has been created with UA {user_agent} and proxy {proxy}")
     return driver
 
-def reset_driver(driver):
+def reset_driver(driver, proxy):
+    logger.info("Driver is being reset...")
     if driver:
         try:
             driver.close()
@@ -138,9 +150,10 @@ def reset_driver(driver):
             logger.error("Error, Fail to close driver: ", e)
     
     try:
-        new_driver = get_driver()
+        new_driver = get_driver(proxy=proxy)
     except Exception as e:
         logger.error("Error, Fail to setup new driver: ", e)
+        return None
 
     logger.info("Driver has been reset...")
     return new_driver
