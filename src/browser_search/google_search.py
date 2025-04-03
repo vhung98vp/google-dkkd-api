@@ -24,7 +24,10 @@ def get_company_identity(driver, company_name, site_url):
     try:
         driver.get(f"https://www.google.com/search?q={query}&hl=vi")
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//div[@id='search']"))
+            EC.any_of(
+                EC.presence_of_element_located((By.XPATH, "//div[@id='search']")),
+                EC.presence_of_element_located((By.XPATH, "//iframe[@title='reCAPTCHA']"))
+            )
         )
     except TimeoutException as e:
         logger.error(f"Timeout while loading Google search page: {e}")
